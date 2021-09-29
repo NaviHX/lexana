@@ -22,4 +22,4 @@ test: $(target)
 	$(target) test.c
 
 debug: $(target)
-	gdb $(target)
+	gdb --args $(target) test.c
