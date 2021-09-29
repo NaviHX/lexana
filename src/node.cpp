@@ -4,7 +4,7 @@
 
 Node* initNode(const std::string& type,const std::string& desc, int line,int address,Node* next)
 {
-    Node* ret=(Node*)malloc(sizeof(Node));
+    Node* ret=new Node;
     if(ret==NULL)
         return NULL;
     
@@ -29,9 +29,9 @@ void printNode(Node* npt)
         std::cout<<"-,";
     
     if(npt->address!=-1)
-        std::cout<<npt->address<<",";
+        std::cout<<npt->address<<">";
     else
-        std::cout<<"-,";
+        std::cout<<"->";
 
     std::cout<<std::endl;
 }
