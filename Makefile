@@ -1,7 +1,7 @@
 .PHONY:clean test
 
 target= lexana
-CXXFLAGS= -g -Iinclude
+CXXFLAGS= -g -Iinclude -O0
 
 $(target): log.o node.o keyword.o ./src/main.cpp
 	$(CXX) $(CXXFLAGS) ./src/main.cpp node.o log.o keyword.o -o $(target)
@@ -19,7 +19,7 @@ clean:
 	rm *.o
 
 test: $(target)
-	$(target) test.c
+	./$(target) test.c
 
 debug: $(target)
 	gdb --args $(target) test.c
