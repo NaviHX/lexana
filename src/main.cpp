@@ -4,6 +4,7 @@
 
 #include <string>
 #include <cstdlib>
+#include <vector>
 
 #define START 0
 #define IDENTIFIER 1
@@ -57,7 +58,7 @@ int main(int argc, char *argv[])
     }
 
     std::string word;
-    char c;
+    char c = 0;
     int temp;
 
     Node *p = NULL;
@@ -72,7 +73,7 @@ int main(int argc, char *argv[])
             switch (c)
             {
             case '#':
-                printLog(LEVEL_WARNING, line, "Preprocess Instruction Encountered");
+                printLog(LEVEL_WARNING, line, "Preprocess Instruction Encountered. Plz run preprocessor (cpp) before");
                 do
                 {
                     if (c == EOF)
@@ -155,6 +156,8 @@ int main(int argc, char *argv[])
             case '{':
             case '}':
             case '.':
+            case ',':
+            case ';':
                 word += c;
                 p = initNode(word, "-", line, -1, NULL);
                 insertToken(p);
@@ -166,6 +169,11 @@ int main(int argc, char *argv[])
                 break;
 
             case '\\':
+            case ' ':
+                break;
+
+            case EOF:
+                state = -1;
                 break;
 
             default:
@@ -361,18 +369,27 @@ int main(int argc, char *argv[])
         case STRING:
             do
             {
-                c = fgetc(fp);
-                if (c == '\\')
-                {
-                    word += c;
-                    c = fgetc(fp);
-                    if (c != '\n')
-                        word += c;
-                }
-                if (c == '\n')
-                    line++;
-                if (c == EOF)
-                    state = -1;
+               c=fgetc(fp);
+               if(c=='\"')
+               {
+                   state=START;
+               }
+               else if(c=='\n')
+               {
+                   printLog(LEVEL_ERROR,line,"Require Quote after string");
+                   state=START;
+               }
+               else if(c=='\\')
+               {
+                   word+=c;
+                   c=fgetc(fp);
+                   if(c!='\n')
+                    word+=c;
+               }
+               else
+               {
+                   word+=c;
+               }
             } while (state == STRING);
             if (state == -1)
             {
@@ -455,10 +472,11 @@ int main(int argc, char *argv[])
                 word += c;
                 break;
             default:
-                if(isKeyword(word))
+                if (isKeyword(word))
                 {
-                    p=initNode(word,"-",line,-1,NULL);
+                    p = initNode(word, "-", line, -1, NULL);
                     insertToken(p);
+                    state = START;
                     break;
                 }
                 p = initNode("identifier", word, line, -1, NULL);
@@ -559,53 +577,53 @@ int main(int argc, char *argv[])
             break;
         }
     } while (c != EOF);
-    
-    for(p=tokenList;p!=NULL;p=p->next)
+    /* for (p = tokenList; p != NULL; p = p->next)
     {
         printNode(p);
-    }
+    } */
 
     return 0;
 }
 
-void insertToken(Node* p)
+void insertToken(Node *p)
 {
-    if(tokenList==NULL)
+    if (tokenList == NULL)
     {
-        tokenList=p;
-        tokenTail=p;
+        tokenList = p;
+        tokenTail = p;
     }
     else
     {
-        tokenTail->next=p;
-        tokenTail=p;
+        tokenTail->next = p;
+        tokenTail = p;
     }
+    printNode(p);
 }
 
-int insertID(Node* p)
+int insertID(Node *p)
 {
-    if(IDtable==NULL)
+    if (IDtable == NULL)
     {
-        IDtable=p;
-        IDtail=p;
-        IDcount=1;
+        IDtable = p;
+        IDtail = p;
+        IDcount = 1;
     }
     else
     {
-        IDtail->next=p;
-        IDtail=p;
+        IDtail->next = p;
+        IDtail = p;
         IDcount++;
     }
-    return IDcount;
+    return IDcount - 1;
 }
 
-int findID(const std::string& idname)
+int findID(const std::string &idname)
 {
-    Node* cur=IDtable;
-    int id=0;
-    for(;cur!=NULL;cur=cur->next)
+    Node *cur = IDtable;
+    int id = 0;
+    for (; cur != NULL; cur = cur->next)
     {
-        if(cur->description==idname)
+        if (cur->description == idname)
         {
             return id;
         }
