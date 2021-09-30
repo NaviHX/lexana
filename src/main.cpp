@@ -32,7 +32,7 @@ Node *tokenTail = NULL;
 Node *IDtable = NULL;
 Node *IDtail = NULL;
 
-void insertToken(Node *p);
+void addToken(Node *p);
 int insertID(Node *p);
 int findID(const std::string &idname);
 
@@ -158,9 +158,11 @@ int main(int argc, char *argv[])
             case '.':
             case ',':
             case ';':
+            case ':':
+            case '?':
                 word += c;
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 break;
 
             case '\n':
@@ -198,14 +200,14 @@ int main(int argc, char *argv[])
                 word += c;
                 state = 0;
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 break;
             case '\n':
                 line++;
             default:
                 state = START;
                 p = initNode("/", "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 fseek(fp, -1, SEEK_CUR);
                 break;
             }
@@ -252,13 +254,13 @@ int main(int argc, char *argv[])
             case '=':
                 word += '=';
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 state = START;
                 break;
 
             default:
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
@@ -272,13 +274,13 @@ int main(int argc, char *argv[])
             case '=':
                 word += '=';
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 state = START;
                 break;
 
             default:
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
@@ -292,13 +294,13 @@ int main(int argc, char *argv[])
             case '=':
                 word += '=';
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 state = START;
                 break;
 
             default:
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
@@ -312,27 +314,27 @@ int main(int argc, char *argv[])
             case '=':
                 word += '=';
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 state = START;
                 break;
 
             case '-':
                 word += '-';
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 state = START;
                 break;
 
             case '>':
                 word += '>';
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 state = START;
                 break;
 
             default:
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
@@ -346,20 +348,20 @@ int main(int argc, char *argv[])
             case '=':
                 word += '=';
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 state = START;
                 break;
 
             case '+':
                 word += '+';
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 state = START;
                 break;
 
             default:
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
@@ -398,7 +400,7 @@ int main(int argc, char *argv[])
             else
             {
                 p = initNode("string", word, line, -1, NULL);
-                insertToken(p);
+                addToken(p);
             }
             break;
 
@@ -409,13 +411,13 @@ int main(int argc, char *argv[])
             case '=':
                 word += '=';
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 state = START;
                 break;
 
             default:
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
@@ -429,13 +431,13 @@ int main(int argc, char *argv[])
             case '=':
                 word += '=';
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 state = START;
                 break;
 
             default:
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
@@ -449,13 +451,13 @@ int main(int argc, char *argv[])
             case '=':
                 word += '=';
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 state = START;
                 break;
 
             default:
                 p = initNode(word, "-", line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
@@ -475,7 +477,7 @@ int main(int argc, char *argv[])
                 if (isKeyword(word))
                 {
                     p = initNode(word, "-", line, -1, NULL);
-                    insertToken(p);
+                    addToken(p);
                     state = START;
                     break;
                 }
@@ -485,7 +487,7 @@ int main(int argc, char *argv[])
                     p->address = insertID(p);
                 else
                     p->address = temp;
-                insertToken(p);
+                addToken(p);
                 fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
@@ -510,7 +512,7 @@ int main(int argc, char *argv[])
                 break;
             default:
                 p = initNode("number", word, line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
@@ -532,7 +534,7 @@ int main(int argc, char *argv[])
                 break;
             default:
                 p = initNode("number", word, line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
@@ -553,7 +555,7 @@ int main(int argc, char *argv[])
                 break;
             default:
                 p = initNode("number", word, line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
@@ -569,7 +571,7 @@ int main(int argc, char *argv[])
                 break;
             default:
                 p = initNode("number", word, line, -1, NULL);
-                insertToken(p);
+                addToken(p);
                 fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
@@ -577,15 +579,11 @@ int main(int argc, char *argv[])
             break;
         }
     } while (c != EOF);
-    /* for (p = tokenList; p != NULL; p = p->next)
-    {
-        printNode(p);
-    } */
 
     return 0;
 }
 
-void insertToken(Node *p)
+void addToken(Node *p)
 {
     if (tokenList == NULL)
     {
