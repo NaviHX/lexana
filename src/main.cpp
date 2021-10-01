@@ -5,6 +5,7 @@
 #include <string>
 #include <cstdlib>
 #include <vector>
+#include <map>
 
 #define START 0
 #define IDENTIFIER 1
@@ -26,6 +27,8 @@
 #define MOD 17
 
 int IDcount = 0;
+int charCount = 0;
+std::map<std::string, int> tokenCount;
 
 Node *tokenList = NULL;
 Node *tokenTail = NULL;
@@ -35,6 +38,8 @@ Node *IDtail = NULL;
 void addToken(Node *p);
 int insertID(Node *p);
 int findID(const std::string &idname);
+void printStatisc();
+char getChar(FILE *fp);
 
 int state = 0;
 int line = 0;
@@ -69,7 +74,7 @@ int main(int argc, char *argv[])
         {
         case START:
             word = "";
-            c = fgetc(fp);
+            c = getChar(fp);
             switch (c)
             {
             case '#':
@@ -81,9 +86,8 @@ int main(int argc, char *argv[])
                         state = -1;
                         break;
                     }
-                    c = fgetc(fp);
+                    c = getChar(fp);
                 } while (c != '\n');
-                line++;
                 break;
 
             case '/':
@@ -167,7 +171,6 @@ int main(int argc, char *argv[])
 
             case '\n':
                 word = "";
-                line++;
                 break;
 
             case '\\':
@@ -185,7 +188,7 @@ int main(int argc, char *argv[])
             break;
 
         case SLASH:
-            c = fgetc(fp);
+            c = getChar(fp);
             switch (c)
             {
             case '*':
@@ -203,7 +206,6 @@ int main(int argc, char *argv[])
                 addToken(p);
                 break;
             case '\n':
-                line++;
             default:
                 state = START;
                 p = initNode("/", "-", line, -1, NULL);
@@ -216,29 +218,25 @@ int main(int argc, char *argv[])
         case LINECOMMENT:
             do
             {
-                c = fgetc(fp);
+                c = getChar(fp);
                 if (c == EOF)
                 {
                     state = -1;
                     break;
                 }
             } while (c != '\n' && state != -1);
-            line++;
             break;
 
         case COMMENT:
             do
             {
-                c = fgetc(fp);
+                c = getChar(fp);
                 if (c == '*')
                 {
-                    c = fgetc(fp);
+                    c = getChar(fp);
                     if (c == '/')
                         state = START;
                 }
-
-                if (c == '\n')
-                    line++;
 
                 if (c == EOF)
                 {
@@ -248,7 +246,7 @@ int main(int argc, char *argv[])
             break;
 
         case ASTERIK:
-            c = fgetc(fp);
+            c = getChar(fp);
             switch (c)
             {
             case '=':
@@ -268,7 +266,7 @@ int main(int argc, char *argv[])
             break;
 
         case EQUAL:
-            c = fgetc(fp);
+            c = getChar(fp);
             switch (c)
             {
             case '=':
@@ -288,7 +286,7 @@ int main(int argc, char *argv[])
             break;
 
         case EXCLAM:
-            c = fgetc(fp);
+            c = getChar(fp);
             switch (c)
             {
             case '=':
@@ -308,7 +306,7 @@ int main(int argc, char *argv[])
             break;
 
         case MINUS:
-            c = fgetc(fp);
+            c = getChar(fp);
             switch (c)
             {
             case '=':
@@ -342,7 +340,7 @@ int main(int argc, char *argv[])
             break;
 
         case PLUS:
-            c = fgetc(fp);
+            c = getChar(fp);
             switch (c)
             {
             case '=':
@@ -371,27 +369,27 @@ int main(int argc, char *argv[])
         case STRING:
             do
             {
-               c=fgetc(fp);
-               if(c=='\"')
-               {
-                   state=START;
-               }
-               else if(c=='\n')
-               {
-                   printLog(LEVEL_ERROR,line,"Require Quote after string");
-                   state=START;
-               }
-               else if(c=='\\')
-               {
-                   word+=c;
-                   c=fgetc(fp);
-                   if(c!='\n')
-                    word+=c;
-               }
-               else
-               {
-                   word+=c;
-               }
+                c = getChar(fp);
+                if (c == '\"')
+                {
+                    state = START;
+                }
+                else if (c == '\n')
+                {
+                    printLog(LEVEL_ERROR, line, "Require Quote after string");
+                    state = START;
+                }
+                else if (c == '\\')
+                {
+                    word += c;
+                    c = getChar(fp);
+                    if (c != '\n')
+                        word += c;
+                }
+                else
+                {
+                    word += c;
+                }
             } while (state == STRING);
             if (state == -1)
             {
@@ -405,7 +403,7 @@ int main(int argc, char *argv[])
             break;
 
         case LESS:
-            c = fgetc(fp);
+            c = getChar(fp);
             switch (c)
             {
             case '=':
@@ -416,10 +414,10 @@ int main(int argc, char *argv[])
                 break;
 
             case '<':
-                word+= '<';
-                p=initNode(word,"-",line,-1,NULL);
+                word += '<';
+                p = initNode(word, "-", line, -1, NULL);
                 addToken(p);
-                state=START;
+                state = START;
                 break;
 
             default:
@@ -432,7 +430,7 @@ int main(int argc, char *argv[])
             break;
 
         case GREATER:
-            c = fgetc(fp);
+            c = getChar(fp);
             switch (c)
             {
             case '=':
@@ -443,10 +441,10 @@ int main(int argc, char *argv[])
                 break;
 
             case '>':
-                word+= '>';
-                p=initNode(word,"-",line,-1,NULL);
+                word += '>';
+                p = initNode(word, "-", line, -1, NULL);
                 addToken(p);
-                state=START;
+                state = START;
                 break;
 
             default:
@@ -459,7 +457,7 @@ int main(int argc, char *argv[])
             break;
 
         case MOD:
-            c = fgetc(fp);
+            c = getChar(fp);
             switch (c)
             {
             case '=':
@@ -479,7 +477,7 @@ int main(int argc, char *argv[])
             break;
 
         case IDENTIFIER:
-            c = fgetc(fp);
+            c = getChar(fp);
             switch (c)
             {
             case 'a' ... 'z':
@@ -509,7 +507,7 @@ int main(int argc, char *argv[])
             break;
 
         case NUMBER:
-            c = fgetc(fp);
+            c = getChar(fp);
             switch (c)
             {
             case '0' ... '9':
@@ -534,7 +532,7 @@ int main(int argc, char *argv[])
             break;
 
         case DOT:
-            c = fgetc(fp);
+            c = getChar(fp);
             switch (c)
             {
             case '0' ... '9':
@@ -556,7 +554,7 @@ int main(int argc, char *argv[])
             break;
 
         case DECIMAL:
-            c = fgetc(fp);
+            c = getChar(fp);
             switch (c)
             {
             case '0' ... '9':
@@ -577,7 +575,7 @@ int main(int argc, char *argv[])
             break;
 
         case EXP:
-            c = fgetc(fp);
+            c = getChar(fp);
             switch (c)
             {
             case '0' ... '9':
@@ -593,6 +591,8 @@ int main(int argc, char *argv[])
             break;
         }
     } while (c != EOF);
+
+    printStatisc();
 
     return 0;
 }
@@ -614,6 +614,11 @@ void addToken(Node *p)
         tokenTail = p;
     }
     printNode(p);
+
+    if (tokenCount.find(p->type) == tokenCount.end())
+        tokenCount[p->type] = 1;
+    else
+        tokenCount[p->type]++;
 }
 
 /* 
@@ -654,4 +659,31 @@ int findID(const std::string &idname)
         id++;
     }
     return -1;
+}
+
+void printStatisc()
+{
+    std::cout << "=== Statiscal Data ===" << std::endl;
+
+    for (auto &it : tokenCount)
+    {
+        std::cout << " " << it.first << " : " << it.second << std::endl;
+    }
+
+    std::cout << " Total Lines : " << line + 1 << std::endl;
+    std::cout << " Total Chars : " << charCount << std::endl;
+}
+
+/* 
+ * 获取一个字符,并统计行数与字符数
+ * FILE *fp 读取的文件
+ */
+char getChar(FILE *fp)
+{
+    char c = fgetc(fp);
+    if (c != EOF)
+        charCount++;
+    if (c == '\n')
+        line++;
+    return c;
 }
