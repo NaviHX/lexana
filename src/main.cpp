@@ -597,6 +597,10 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+/* 
+ * 向记号链表中添加记号,输出记号,统计记号数目
+ * Node *p 添加的记号指针
+ */
 void addToken(Node *p)
 {
     if (tokenList == NULL)
@@ -612,6 +616,10 @@ void addToken(Node *p)
     printNode(p);
 }
 
+/* 
+ * 向符号表末尾插入新标识符
+ * Node *p 添加的标识符指针
+ */
 int insertID(Node *p)
 {
     if (IDtable == NULL)
@@ -629,6 +637,10 @@ int insertID(Node *p)
     return IDcount - 1;
 }
 
+/* 
+ * 在符号表中查询标识符,查询成功返回索引,否则返回-1
+ * const std::string &idname 查询的标识符
+ */
 int findID(const std::string &idname)
 {
     Node *cur = IDtable;
