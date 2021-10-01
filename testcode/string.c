@@ -1,0 +1,4 @@
+"test"
+"extra\
+line"
+"errorstring
