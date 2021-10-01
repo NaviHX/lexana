@@ -24,6 +24,9 @@ int main()
 
     j = max(c[2], c[3]);
 
+    j = (j << 1);
+    j = (j >> 2);
+
     switch (reg)
     {
     case 0:

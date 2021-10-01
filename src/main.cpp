@@ -415,6 +415,13 @@ int main(int argc, char *argv[])
                 state = START;
                 break;
 
+            case '<':
+                word+= '<';
+                p=initNode(word,"-",line,-1,NULL);
+                addToken(p);
+                state=START;
+                break;
+
             default:
                 p = initNode(word, "-", line, -1, NULL);
                 addToken(p);
@@ -433,6 +440,13 @@ int main(int argc, char *argv[])
                 p = initNode(word, "-", line, -1, NULL);
                 addToken(p);
                 state = START;
+                break;
+
+            case '>':
+                word+= '>';
+                p=initNode(word,"-",line,-1,NULL);
+                addToken(p);
+                state=START;
                 break;
 
             default:
