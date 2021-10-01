@@ -164,6 +164,7 @@ int main(int argc, char *argv[])
             case ';':
             case ':':
             case '?':
+            case '\'':
                 word += c;
                 p = initNode(word, "-", line, -1, NULL);
                 addToken(p);
