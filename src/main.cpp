@@ -40,6 +40,7 @@ int insertID(Node *p);
 int findID(const std::string &idname);
 void printStatisc();
 char getChar(FILE *fp);
+void fallBack(FILE *fp);
 
 int state = 0;
 int line = 0;
@@ -209,9 +210,9 @@ int main(int argc, char *argv[])
             case '\n':
             default:
                 state = START;
+                fallBack(fp);
                 p = initNode("/", "-", line, -1, NULL);
                 addToken(p);
-                fseek(fp, -1, SEEK_CUR);
                 break;
             }
             break;
@@ -258,9 +259,9 @@ int main(int argc, char *argv[])
                 break;
 
             default:
+                fallBack(fp);
                 p = initNode(word, "-", line, -1, NULL);
                 addToken(p);
-                fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
             }
@@ -278,9 +279,9 @@ int main(int argc, char *argv[])
                 break;
 
             default:
+                fallBack(fp);
                 p = initNode(word, "-", line, -1, NULL);
                 addToken(p);
-                fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
             }
@@ -298,9 +299,9 @@ int main(int argc, char *argv[])
                 break;
 
             default:
+                fallBack(fp);
                 p = initNode(word, "-", line, -1, NULL);
                 addToken(p);
-                fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
             }
@@ -332,9 +333,9 @@ int main(int argc, char *argv[])
                 break;
 
             default:
+                fallBack(fp);
                 p = initNode(word, "-", line, -1, NULL);
                 addToken(p);
-                fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
             }
@@ -359,9 +360,9 @@ int main(int argc, char *argv[])
                 break;
 
             default:
+                fallBack(fp);
                 p = initNode(word, "-", line, -1, NULL);
                 addToken(p);
-                fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
             }
@@ -422,9 +423,9 @@ int main(int argc, char *argv[])
                 break;
 
             default:
+                fallBack(fp);
                 p = initNode(word, "-", line, -1, NULL);
                 addToken(p);
-                fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
             }
@@ -449,9 +450,9 @@ int main(int argc, char *argv[])
                 break;
 
             default:
+                fallBack(fp);
                 p = initNode(word, "-", line, -1, NULL);
                 addToken(p);
-                fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
             }
@@ -469,9 +470,9 @@ int main(int argc, char *argv[])
                 break;
 
             default:
+                fallBack(fp);
                 p = initNode(word, "-", line, -1, NULL);
                 addToken(p);
-                fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
             }
@@ -494,6 +495,7 @@ int main(int argc, char *argv[])
                     state = START;
                     break;
                 }
+                fallBack(fp);
                 p = initNode("identifier", word, line, -1, NULL);
                 temp = findID(word);
                 if (temp == -1)
@@ -501,7 +503,6 @@ int main(int argc, char *argv[])
                 else
                     p->address = temp;
                 addToken(p);
-                fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
             }
@@ -524,9 +525,9 @@ int main(int argc, char *argv[])
                 state = EXP;
                 break;
             default:
+                fallBack(fp);
                 p = initNode("number", word, line, -1, NULL);
                 addToken(p);
-                fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
             }
@@ -546,9 +547,9 @@ int main(int argc, char *argv[])
                 state = EXP;
                 break;
             default:
+                fallBack(fp);
                 p = initNode("number", word, line, -1, NULL);
                 addToken(p);
-                fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
             }
@@ -567,9 +568,9 @@ int main(int argc, char *argv[])
                 state = EXP;
                 break;
             default:
+                fallBack(fp);
                 p = initNode("number", word, line, -1, NULL);
                 addToken(p);
-                fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
             }
@@ -583,9 +584,9 @@ int main(int argc, char *argv[])
                 word += c;
                 break;
             default:
+                fallBack(fp);
                 p = initNode("number", word, line, -1, NULL);
                 addToken(p);
-                fseek(fp, -1, SEEK_CUR);
                 state = START;
                 break;
             }
@@ -687,4 +688,18 @@ char getChar(FILE *fp)
     if (c == '\n')
         line++;
     return c;
+}
+
+/* 
+ * 文件指针前移一个字符,恢复统计信息
+ * FILE *fp 需要前移的文件
+ */
+void fallBack(FILE *fp)
+{
+    fseek(fp,-1,SEEK_CUR);
+    char c=fgetc(fp);
+    if(c=='\n')
+        line--;
+    charCount--;
+    fseek(fp,-1,SEEK_CUR);
 }
