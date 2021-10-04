@@ -7,6 +7,8 @@
 #include <vector>
 #include <map>
 
+#include <cstring>
+
 #define START 0
 #define IDENTIFIER 1
 #define NUMBER 2
@@ -54,6 +56,14 @@ int main(int argc, char *argv[])
         printLog(LEVEL_ERROR, 0, "Input File Name Needed");
         std::cout << "Usage : lexana <filepath>\n";
         return 0;
+    }
+
+    if (strcmp(argv[1], "-h") || strcmp(argv[1], "--help"))
+    {
+        std::cout << "BUILD "__DATE__""__TIME__ << std::endl
+                  << "Usage : lexana <filepath> | <option>" << std::endl
+                  << "Option :" << std::endl
+                  << "-h, --help : help info" << std::endl
     }
 
     fp = fopen(argv[1], "r");
@@ -663,6 +673,9 @@ int findID(const std::string &idname)
     return -1;
 }
 
+/* 
+ * 输出统计数据,包含每种单词的次数与总字符数,行数
+ */
 void printStatisc()
 {
     std::cout << "=== Statiscal Data ===" << std::endl;
@@ -696,10 +709,10 @@ char getChar(FILE *fp)
  */
 void fallBack(FILE *fp)
 {
-    fseek(fp,-1,SEEK_CUR);
-    char c=fgetc(fp);
-    if(c=='\n')
+    fseek(fp, -1, SEEK_CUR);
+    char c = fgetc(fp);
+    if (c == '\n')
         line--;
     charCount--;
-    fseek(fp,-1,SEEK_CUR);
+    fseek(fp, -1, SEEK_CUR);
 }
