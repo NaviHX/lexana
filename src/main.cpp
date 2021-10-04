@@ -58,12 +58,22 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if (strcmp(argv[1], "-h") || strcmp(argv[1], "--help"))
+    if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
     {
         std::cout << "BUILD " __DATE__ "" __TIME__ << std::endl
                   << "Usage : lexana <filepath> | <option>" << std::endl
+                  << std::endl
                   << "Option :" << std::endl
-                  << "-h, --help : help info" << std::endl;
+                  << "-h, --help : help info" << std::endl
+                  << std::endl
+                  << "Output Format : " << std::endl
+                  << "Each line before \'Stastiscal Data\' represents a token." << std::endl
+                  << "Tokens have 4 attributes, <class, description, line, " << std::endl
+                  << "address>. For number and string, class is \'number\' or" << std::endl
+                  << "\'string\' and description is the value. For others, " << std::endl
+                  << "class is the type and the description is empty. the " << std::endl
+                  << "address attribute is only valid for identifiers." << std::endl;
+        return 0;
     }
 
     fp = fopen(argv[1], "r");
