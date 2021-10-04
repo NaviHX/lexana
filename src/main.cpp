@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 
     if (strcmp(argv[1], "-h") || strcmp(argv[1], "--help"))
     {
-        std::cout << "BUILD "__DATE__""__TIME__ << std::endl
+        std::cout << "BUILD " __DATE__ "" __TIME__ << std::endl
                   << "Usage : lexana <filepath> | <option>" << std::endl
                   << "Option :" << std::endl
                   << "-h, --help : help info" << std::endl;
