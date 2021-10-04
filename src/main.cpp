@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
         std::cout << "BUILD "__DATE__""__TIME__ << std::endl
                   << "Usage : lexana <filepath> | <option>" << std::endl
                   << "Option :" << std::endl
-                  << "-h, --help : help info" << std::endl
+                  << "-h, --help : help info" << std::endl;
     }
 
     fp = fopen(argv[1], "r");
