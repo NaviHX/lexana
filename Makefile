@@ -1,7 +1,7 @@
 .PHONY:clean test
 
 target= lexana
-CXXFLAGS= -g -Iinclude -O0
+CXXFLAGS= -g -Iinclude -O2 -std=c++11
 testdir= ./testcode/
 testcode= $(shell ls $(testdir))
 
@@ -19,6 +19,7 @@ keyword.o: ./src/keyword.cpp
 
 clean:
 	rm *.o
+	rm lexana*
 
 test: $(target)
 	@for file in $(testcode); do\
