@@ -27,6 +27,7 @@
 #define LESS 15
 #define GREATER 16
 #define MOD 17
+#define CHAR 18
 
 int IDcount = 0;
 int charCount = 0;
@@ -171,6 +172,10 @@ int main(int argc, char *argv[])
                 word += '%';
                 break;
 
+            case '\'':
+                state = CHAR;
+                break;
+
             case '~':
             case '^':
             case '&':
@@ -185,7 +190,6 @@ int main(int argc, char *argv[])
             case ';':
             case ':':
             case '?':
-            case '\'':
                 word += c;
                 p = initNode(word, "-", line, -1, NULL);
                 addToken(p);
@@ -510,7 +514,7 @@ int main(int argc, char *argv[])
             default:
                 if (isKeyword(word))
                 {
-                    p = initNode(word, "-", line, -1, NULL);
+                    p = initNode("keyword", word, line, -1, NULL);
                     addToken(p);
                     state = START;
                     break;
@@ -610,6 +614,25 @@ int main(int argc, char *argv[])
                 state = START;
                 break;
             }
+            break;
+
+        case CHAR:
+            c = getChar(fp);
+            switch (c)
+            {
+            case '\\':
+                word += c;
+                c = getChar(fp);
+                word += c;
+                break;
+
+            default:
+                word += c;
+                break;
+            }
+            p = initNode("char", word, line, -1, NULL);
+            addToken(p);
+            state = START;
             break;
         }
     } while (c != EOF);
