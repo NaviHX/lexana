@@ -548,6 +548,14 @@ int main(int argc, char *argv[])
                 word += c;
                 state = EXP;
                 break;
+
+            case 'a' ... 'd':
+            case 'A' ... 'D':
+            case 'f' ... 'z':
+            case 'F' ... 'Z':
+                printLog(LEVEL_ERROR, line, "Require delimiter after number");
+                // fallthrough
+
             default:
                 fallBack(fp);
                 p = initNode("number", word, line, -1, NULL);
@@ -570,6 +578,14 @@ int main(int argc, char *argv[])
                 word += c;
                 state = EXP;
                 break;
+
+            case 'a' ... 'd':
+            case 'A' ... 'D':
+            case 'f' ... 'z':
+            case 'F' ... 'Z':
+                printLog(LEVEL_ERROR, line, "Require delimiter after number");
+                // fallthrough
+
             default:
                 fallBack(fp);
                 p = initNode("number", word, line, -1, NULL);
@@ -591,6 +607,14 @@ int main(int argc, char *argv[])
                 word += c;
                 state = EXP;
                 break;
+
+            case 'a' ... 'd':
+            case 'A' ... 'D':
+            case 'f' ... 'z':
+            case 'F' ... 'Z':
+                printLog(LEVEL_ERROR, line, "Require delimiter after number");
+                // fallthrough
+
             default:
                 fallBack(fp);
                 p = initNode("number", word, line, -1, NULL);
@@ -607,6 +631,12 @@ int main(int argc, char *argv[])
             case '0' ... '9':
                 word += c;
                 break;
+
+            case 'a' ... 'z':
+            case 'A' ... 'Z':
+                printLog(LEVEL_ERROR, line, "Require delimiter after number");
+                // fallthrough
+
             default:
                 fallBack(fp);
                 p = initNode("number", word, line, -1, NULL);
