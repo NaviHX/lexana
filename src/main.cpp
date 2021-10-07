@@ -665,6 +665,9 @@ int main(int argc, char *argv[])
                 word += c;
                 break;
             }
+            c = getChar(fp);
+            if (c != '\'')
+                printLog(LEVEL_ERROR, line, "Need Single Quote after a char");
             p = initNode("char", word, line, -1, NULL);
             addToken(p);
             state = START;
