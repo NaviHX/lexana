@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
                   << "Output Format : " << std::endl
                   << "Each line before \'Stastiscal Data\' represents a token." << std::endl
                   << "Tokens have 4 attributes, <class, description, line, " << std::endl
-                  << "address>. For number and string, class is \'number\' or" << std::endl
+                  << "address>. For number, keyword, char and string, class is \'number\' or" << std::endl
                   << "\'string\' and description is the value. For others, " << std::endl
                   << "class is the type and the description is empty. the " << std::endl
                   << "address attribute is only valid for identifiers." << std::endl;
@@ -658,6 +658,7 @@ int main(int argc, char *argv[])
 
             case '\'':
                 printLog(LEVEL_ERROR, line, "Empty char!");
+                fallBack(fp);
                 state = START;
                 break;
 
