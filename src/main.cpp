@@ -626,6 +626,11 @@ int main(int argc, char *argv[])
                 word += c;
                 break;
 
+            case '\'':
+                printLog(LEVEL_ERROR, line, "Empty char!");
+                state = START;
+                break;
+
             default:
                 word += c;
                 break;
