@@ -55,13 +55,14 @@ int main(int argc, char *argv[])
     if (argc < 2)
     {
         printLog(LEVEL_ERROR, 0, "Input File Name Needed");
-        std::cout << "Usage : lexana <filepath>\n";
+        std::cout << "Usage : lexana <filepath>\n"
+                  << "-h for more info\n";
         return 0;
     }
 
     if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
     {
-        std::cout << "BUILD " __DATE__ "" __TIME__ << std::endl
+        std::cout << "BUILD " __DATE__ " " __TIME__ << std::endl
                   << "Usage : lexana <filepath> | <option>" << std::endl
                   << std::endl
                   << "Option :" << std::endl
