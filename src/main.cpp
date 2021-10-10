@@ -28,6 +28,10 @@
 #define GREATER 16
 #define MOD 17
 #define CHAR 18
+#define ZERO 19
+#define OCT 20
+#define HEX 21
+#define BIN 22
 
 int IDcount = 0;
 int charCount = 0;
@@ -124,7 +128,12 @@ int main(int argc, char *argv[])
                 word += c;
                 break;
 
-            case '0' ... '9':
+            case '0':
+                state = ZERO;
+                word += c;
+                break;
+
+            case '1' ... '9':
                 state = NUMBER;
                 word += c;
                 break;
@@ -674,8 +683,119 @@ int main(int argc, char *argv[])
             addToken(p);
             state = START;
             break;
+
+        case ZERO:
+            c = getChar(fp);
+            switch (c)
+            {
+            case 'x':
+                word += c;
+                state = HEX;
+                break;
+
+            case '0' ... '7':
+                word += c;
+                state = OCT;
+                break;
+
+            case 'b':
+            case 'B':
+                word += c;
+                state = BIN;
+                break;
+
+            case '8' ... '9':
+            case 'a':
+            case 'A':
+            case 'c' ... 'f':
+            case 'C' ... 'F':
+                printLog(LEVEL_ERROR, line, "Deteced a hex number with oct prefix.");
+                word += 'x';
+                word += c;
+                state = HEX;
+                break;
+
+            default:
+                fallBack(fp);
+                p = initNode("number", word, line, -1, NULL);
+                addToken(p);
+                state = START;
+                break;
+            }
+            break;
+
+        case OCT:
+            c = getChar(fp);
+            switch (c)
+            {
+            case '0' ... '7':
+                word += c;
+                break;
+
+            case '8' ... '9':
+            case 'a' ... 'f':
+            case 'A' ... 'F':
+                printLog(LEVEL_ERROR, line, "Wrong format of oct number");
+                state = START;
+                break;
+
+            default:
+                fallBack(fp);
+                p = initNode("number", word, line, -1, NULL);
+                addToken(p);
+                state = START;
+                break;
+            }
+            break;
+
+        case HEX:
+            c=getChar(fp);
+            switch(c)
+            {
+            case '0' ... '9':
+            case 'a' ... 'f':
+            case 'A' ... 'F':
+                word+=c;
+                break;
+
+            default:
+                fallBack(fp);
+                p=initNode("number",word,line,-1,NULL);
+                addToken(p);
+                state=START;
+                break;
+            }
+            break;
+
+        case BIN:
+            c = getChar(fp);
+            switch (c)
+            {
+            case '0' ... '1':
+                word += c;
+                break;
+
+            case '2' ... '9':
+            case 'a' ... 'f':
+            case 'A' ... 'F':
+                printLog(LEVEL_ERROR, line, "Wrong format of oct number");
+                state = START;
+                break;
+
+            default:
+                fallBack(fp);
+                p = initNode("number", word, line, -1, NULL);
+                addToken(p);
+                state = START;
+                break;
+            }
+            break;
+
+        default:
+            printLog(LEVEL_ERROR, line, "Entered illegal state");
+            break;
         }
-    } while (c != EOF);
+    } while (c != EOF && state != -1);
 
     printStatisc();
 
